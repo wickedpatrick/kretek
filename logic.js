@@ -1,6 +1,51 @@
 
 var levels = [
-"",
+"", //tu nie ma nic
+
+// "\
+// ################################\
+// #......#GGGG.GGG.G#GG#..G...GG.#\
+// #G..K...##GG..G.GG#..#G...G...G#\
+// ##G.......###GGGG#... ##G.....G#\
+// #.##GG...A...####.......##G...G#\
+// #..G###GG....G    ...B ...#..#G#\
+// #...G..#####GGGGG G.... .....#.#\
+// #.G ...G..G###GGG G#... .G.....#\
+// #...G G..G.G.G##G GG##.. ...#..#\
+// #..GG. ..G.G.. ## G#..#. ..#G..#\
+// #.G .G.G...G.GGG# #....# ..#..##\
+// #..GG. G.GG. GGG# ..G.... #....#\
+// #.G.G... G..GG#G. ....... .##C.#\
+// #..G..G...GGG#G.. .. .G.. ...#.#\
+// #GGG.G..GGG##GG.. ..#..... ...##\
+// #GGGGGGG###GGG... E#GG ..    ..#\
+// #GGG#####GGG....GG#GG. ..  L  .#\
+// ################################\
+// ",
+
+//level 1
+"\
+################################\
+#           GGGGGGGG    GG     #\
+#           G   G G G          #\
+#  GG       G                  #\
+#  GG       G                  #\
+#  #.       G             S    #\
+#       K   G                  #\
+#           .                  #\
+#..............................#\
+#                              #\
+#               #              #\
+#                              #\
+#                              #\
+#                              #\
+#                              #\
+#                              #\
+#                              #\
+################################\
+",
+
+//level 2
 "\
 ################################\
 #                              #\
@@ -12,7 +57,7 @@ var levels = [
 #                              #\
 #                              #\
 #                              #\
-#                              #\
+#             A                #\
 #                              #\
 #                              #\
 #                              #\
@@ -20,8 +65,17 @@ var levels = [
 #                              #\
 #                              #\
 ################################\
-"
+",
+
 ];
+
+
+let getRand = function(a, b)
+{
+    b -= a - 1;
+    return Math.floor(Math.random() * b) + a;
+};
+
 
 let loadLevel = function(levelNo)
 {
@@ -38,3 +92,221 @@ let loadLevel = function(levelNo)
 
     return levelData;
 };
+
+// " " - miejsce
+// "K" - kret
+// "." - ziemia
+// "L" - lopata
+// "A" - robal1
+// "B" - robatk2
+// "C" - robak3
+// "G" - glaz
+// "#" - ściana
+// "E" - ends
+// "S" - snake
+
+var map = [];
+
+let makeGravity = function(kretX, kretY)
+{
+    for (let y = 16; y >= 0; --y) {
+        for (let x = 0; x < 32; ++x) {
+            let c = map[y][x];
+
+            if (c === 'G') {
+                if (isFieldFree(x, y + 1, true)) {
+                    map[y][x] = ' ';
+                    map[y + 1][x] = c;
+
+                    if (y + 1 === kretY && x === kretX) { //todo kret zajebany
+                        // return true;
+                    }
+                } else {
+                    if (isFieldFree(x - 1, y, true) &&
+                        isFieldFree(x + 1, y, true) &&
+                        isFieldFree(x - 1, y + 1, true) &&
+                        isFieldFree(x + 1, y + 1, true) &&
+                        y + 1 < 17 && map[y + 1][x] === 'G'
+                    ) {
+                        map[y][x] = ' ';
+                        map[y + 1][x + (getRand(0, 1) === 0 ? 1 : -1)] = 'G';
+                    } else if (
+                        isFieldFree(x - 1, y, true) &&
+                        isFieldFree(x - 1, y + 1, true) &&
+                        y + 1 < 17 && map[y + 1][x] === 'G'
+                    ) {
+                        map[y][x] = ' ';
+                        map[y + 1][x - 1] = 'G';
+                    } else if (
+                        isFieldFree(x + 1, y, true) &&
+                        isFieldFree(x + 1, y + 1, true) &&
+                        y + 1 < 17 && map[y + 1][x] === 'G'
+                    ) {
+                        map[y][x] = ' ';
+                        map[y + 1][x + 1] = 'G';
+                    }
+                }
+
+            }
+        }
+    }
+
+    return false;
+};
+
+let isFieldFree = function(x, y, forGravity = false)
+{
+    if (x < 0 || x >= 32 || y < 0 || y >= 18) {
+        return false;
+    }
+
+    let c = map[y][x];
+
+    if (c === '#' || c === 'G') {
+        return false;
+    }
+
+    if (forGravity && (c === '.' || c === 'K')) {
+        return false;
+    }
+
+    return true;
+};
+
+let isKretDead = function(x, y)
+{
+    if (map[y][x] === 'S') { //snake eats kretek
+        return true;
+    }
+    return false;
+};
+
+let moveKretAt = function(dir)
+{
+    let pair = findObject('K');
+    let x = pair[0];
+    let y = pair[1];
+    let prevX = x;
+    let prevY = y;
+
+    if (dir === 'right') ++x;
+    if (dir === 'left') --x;
+    if (dir === 'up') --y;
+    if (dir === 'down') ++y;
+
+    if (dir === 'right' && map[y][x] === 'G' && isFieldFree(x + 1, y, true)) {
+        map[prevY][prevX] = ' ';
+        map[y][x] = 'K';
+        map[y][x + 1] = 'G';
+        return true;
+    }
+
+    if (dir === 'left' && map[y][x] === 'G' && isFieldFree(x - 1, y, true)) {
+        map[prevY][prevX] = ' ';
+        map[y][x] = 'K';
+        map[y][x - 1] = 'G';
+        return true;
+    }
+
+    if (!isFieldFree(x, y)) {
+        return false;
+    }
+
+    map[prevY][prevX] = ' ';
+    map[y][x] = 'K';
+
+    return false;
+};
+
+let snakes = [];
+
+let findObject = function(char)
+{
+    for (let y = 0; y < 18; ++y) {
+        for (let x = 0; x < 32; ++x) {
+            if (map[y][x] === char) {
+                return [x, y];
+            }
+        }
+    }
+
+    return [];
+};
+
+var snakeDir = 1;
+
+let moveSnake = function()
+{
+    for (let y = 16; y <= 0; --y) {
+        for (let x = 0; x < 32; ++x) {
+            if (map[y][x] === 'S') {
+                if (snakeDir === 1) {
+                    if (isFieldFree(x + 1, y, true)) {
+                        map[y][x] = ' ';
+                        map[y][x + 1] = 'S';
+                    } else if (isFieldFree(x, y - 1, true)) {
+                        map[y][x] = ' ';
+                        map[y - 1][x] = 'S';
+                    } else {
+                        snakeDir = -1;
+                    }
+                }
+
+                if (snakeDir === -1) {
+                    if (isFieldFree(x - 1, y, true)) {
+                        map[y][x] = ' ';
+                        map[y][x - 1] = 'S';
+                    } else if (isFieldFree(x, y + 1, true)) {
+                        map[y][x] = ' ';
+                        map[y + 1][x] = 'S';
+                    } else {
+                        snakeDir = 1;
+                    }
+                }
+            }
+        }
+    }
+};
+
+
+map = loadLevel(1);
+var mainCounter = 0;
+
+setInterval(function() {
+    //logic
+    if (isDown) moveKretAt('down');
+    else if (isUp) moveKretAt('up');
+    else if (isRight) moveKretAt('right');
+    else if (isLeft) moveKretAt('left');
+
+    //display
+    let str = '';
+    for (let y = 0; y < 18; ++y) {
+        for (let x = 0; x < 32; ++x) {
+            str += map[y][x];
+        }
+        str += "\n";
+    }
+    $('#test-pre').text(str);
+
+    moveSnake();
+    makeGravity(0, 0);
+
+}, 100);
+
+var isLeft = false;
+var isRight = false;
+var isUp = false;
+var isDown = false;
+document.addEventListener("keydown", event => {
+    if (event.keyCode === 40) isDown = true;
+    if (event.keyCode === 38) isUp = true;
+    if (event.keyCode === 39) isRight = true;
+    if (event.keyCode === 37) isLeft = true;
+});
+document.addEventListener("keyup", event2 => {
+    if (event2.keyCode === 40) isDown = false;
+    if (event2.keyCode === 38) isUp = false;
+    if (event2.keyCode === 39) isRight = false;
+    if (event2.keyCode === 37) isLeft = false;
+});
