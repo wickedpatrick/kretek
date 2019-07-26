@@ -1,8 +1,8 @@
 
-let initLogic = function ()
-{
-    Window.loadLevel = loadLevel; //put function to global scope
-};
+// let initLogic = function ()
+// {
+//     Window.loadLevel = loadLevel; //put function to global scope
+// };
 
 function readTextFile(file)
 {
