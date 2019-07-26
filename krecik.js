@@ -140,7 +140,27 @@ window.addEventListener('DOMContentLoaded', (event) => {
  	        gameState = 1;
  	        loadLevel(gameState);
         } else {
- 	        MapObj.draw();
+            if (isDown) moveKretAt('down');
+            else if (isUp) moveKretAt('up');
+            else if (isRight) moveKretAt('right');
+            else if (isLeft) moveKretAt('left');
+
+            moveSnake();
+            makeGravity(0, 0);
+
+            //display debug
+            let str = '';
+            for (let y = 0; y < 18; ++y) {
+                for (let x = 0; x < 32; ++x) {
+                    str += map[y][x];
+                }
+                str += "\n";
+            }
+
+            console.log(str);
+
+
+            MapObj.draw();
         }
 
 	}, 100);

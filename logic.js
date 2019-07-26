@@ -275,29 +275,28 @@ let moveSnake = function()
 
 
 map = loadLevel(1);
-var mainCounter = 0;
 
-setInterval(function() {
-    //logic
-    if (isDown) moveKretAt('down');
-    else if (isUp) moveKretAt('up');
-    else if (isRight) moveKretAt('right');
-    else if (isLeft) moveKretAt('left');
-
-    //display
-    let str = '';
-    for (let y = 0; y < 18; ++y) {
-        for (let x = 0; x < 32; ++x) {
-            str += map[y][x];
-        }
-        str += "\n";
-    }
-    $('#test-pre').text(str);
-
-    moveSnake();
-    makeGravity(0, 0);
-
-}, 100);
+// setInterval(function() {
+//     //logic
+//     if (isDown) moveKretAt('down');
+//     else if (isUp) moveKretAt('up');
+//     else if (isRight) moveKretAt('right');
+//     else if (isLeft) moveKretAt('left');
+//
+//     //display
+//     let str = '';
+//     for (let y = 0; y < 18; ++y) {
+//         for (let x = 0; x < 32; ++x) {
+//             str += map[y][x];
+//         }
+//         str += "\n";
+//     }
+//     $('#test-pre').text(str);
+//
+//     moveSnake();
+//     makeGravity(0, 0);
+//
+// }, 100);
 
 var kretekLastDir = "right";
 var isLeft = false;
