@@ -7,6 +7,13 @@ var FieldClassMapper = {
 	'.': 'ground'
 };
 
+var KretStateMapper = {
+	'right': 'kr',
+	'left': 'kl',
+	'front': 'kf',
+	'back': 'kb',
+};
+
 var gameState = 0;
 
 class Kretek {
@@ -101,7 +108,10 @@ class Kretek {
 class MapMaker {
 	constructor() {
 		this.map = document.querySelector('#map');
-		this.prevState = [];
+		this.prevState = new Array(18);
+		   for (let y = 0; y < 18; ++y) {
+		       this.prevState[y] = new Array(32);
+		   }
 	}
 
 	init () {
@@ -116,6 +126,7 @@ class MapMaker {
 		let tt = this.prevState;
 		map.forEach(function (row, x) {
 			row.forEach(function (field, y) {
+				//console.log(tt);
 				if (tt.length === 0) {
 					toggleFieldClass('_' + x + '_' + y, 'none', field);
 				} else {
@@ -125,9 +136,14 @@ class MapMaker {
 				}
 			});
 		});
-		this.prevState = map;
+	    for (let y = 0; y < 18; ++y) {
+    		for (let x = 0; x < 32; ++x) {
+    			this.prevState[y][x] = 0;
+	        }
+	    }
 	}
 }	
+
 
 window.addEventListener('DOMContentLoaded', (event) => {
 
@@ -157,12 +173,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 str += "\n";
             }
 
-            console.log(str);
+            //console.log(str);
 
 
             MapObj.draw();
         }
-
 	}, 100);
 });
 
@@ -183,10 +198,21 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 function toggleFieldClass(id, prev, thenew)
 {
-	prev = FieldClassMapper[prev];
-	thenew = FieldClassMapper[thenew];
-
 	var field = document.querySelector('#' + id);
+
+	if (thenew === 'K') {
+		field.classList.remove('kl');
+		field.classList.remove('kr');
+		field.classList.remove('kf');
+		field.classList.remove('kb');
+
+		thenew = KretStateMapper[kretekLastDir];
+	} else {
+		prev = FieldClassMapper[prev];
+		thenew = FieldClassMapper[thenew];
+	}
+
+	
 	field.classList.remove(prev);
 	field.classList.add(thenew);
 }
