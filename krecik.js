@@ -9,6 +9,9 @@ var FieldClassMapper = {
 	'B': 'w2',
 	'C': 'w3',
 	'S': 'snake',
+	'D': 'cow',
+	'L': 'dig',
+	'E': 'exit'
 };
 
 var KretStateMapper = {
@@ -170,6 +173,8 @@ function toggleFieldClass(id, prev, thenew)
 	field.classList.remove('w2');
 	field.classList.remove('w3');
 	field.classList.remove('snake');
+	field.classList.remove('cow');
+	field.classList.remove('dig');
 
 	if (thenew === 'K') {
 		thenew = KretStateMapper[kretekLastDir];
