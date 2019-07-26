@@ -83,7 +83,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             let ePair = findObject('E');
 
-            if (globalCounter % 2 === 0) {
+            if (globalCounter % 1 === 0) {
                 if (isDown) moveKretAt('down');
                 else if (isUp) moveKretAt('up');
                 else if (isRight) moveKretAt('right');
@@ -124,11 +124,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 map = loadLevel(gameState);
                 return;
             }
-
-            if (isDown) moveKretAt('down');
-            else if (isUp) moveKretAt('up');
-            else if (isRight) moveKretAt('right');
-            else if (isLeft) moveKretAt('left');
 
             makeGravity(0, 0);
 
