@@ -66,6 +66,7 @@ class MapMaker {
 
 
     var globalCounter = 0;
+    var globalScore = 0;
 
 window.addEventListener('DOMContentLoaded', (event) => {
 
@@ -125,20 +126,22 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 return;
             }
 
-            makeGravity(0, 0);
+            makeGravity();
 
-            //display debug
-            let str = '';
-            for (let y = 0; y < 18; ++y) {
-                for (let x = 0; x < 32; ++x) {
-                    str += map[y][x];
-                }
-                str += "\n";
-            }
-
-            console.log(str);
+            // //display debug
+            // let str = '';
+            // for (let y = 0; y < 18; ++y) {
+            //     for (let x = 0; x < 32; ++x) {
+            //         str += map[y][x];
+            //     }
+            //     str += "\n";
+            // }
+            //
+            // console.log(str);
 
             MapObj.draw();
+
+            $('#score').text(globalScore);
         }
 	}, 100);
 });
@@ -172,7 +175,6 @@ function toggleFieldClass(id, prev, thenew)
 	field.classList.remove(prev);
 	field.classList.add(thenew);
 }
-
 
 function createDiv (x, y) {
 	var mapField = document.createElement('div');
