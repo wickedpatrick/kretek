@@ -1,6 +1,8 @@
 const MAX_WIDTH = 1600;
 const MAX_HEIGHT = 900;
 
+map = [];
+
 var FieldClassMapper = {
 	'#': 'wall',
 	'G': 'stone',
@@ -67,14 +69,16 @@ class MapMaker {
 
 window.addEventListener('DOMContentLoaded', (event) => {
 
+    map = loadLevel(1);
     const MapObj = new MapMaker();
 	MapObj.init();
+
 
  	setInterval(function() {
 
  	    if (gameState === 0) {
  	        gameState = 1;
- 	        loadLevel(gameState);
+ 	        map = loadLevel(gameState);
         } else {
 
             let ePair = findObject('E');
@@ -88,9 +92,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             ++globalCounter;
 
-
             let kPair = findObject('K');
-            moveSnake();
+
+            if ((globalCounter % 2) === 0) {
+                moveSnake();
+            }
+
             let sPair = findObject('S');
 
             let x1 = kPair[0], x2 = sPair[0], y1 = kPair[1], y2 = sPair[1];
@@ -100,14 +107,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 (x1 === x2 && y1 + 1 === y2) ||
                 (x1 === x2 && y1 - 1 === y2)
             ) {
-                gameState = 1;
                 map = loadLevel(gameState);
                 alert("Bitten by river snake");
                 return;
             }
 
-            if (makeGravity() === 'dead' ) {
-                gameState = 1;
+            if (makeGravity() === 'dead') {
                 map = loadLevel(gameState);
                 alert("Rock hit your head!");
                 return;
@@ -125,39 +130,23 @@ window.addEventListener('DOMContentLoaded', (event) => {
             else if (isRight) moveKretAt('right');
             else if (isLeft) moveKretAt('left');
 
-            moveSnake();
             makeGravity(0, 0);
 
-            // //display debug
-            // let str = '';
-            // for (let y = 0; y < 18; ++y) {
-            //     for (let x = 0; x < 32; ++x) {
-            //         str += map[y][x];
-            //     }
-            //     str += "\n";
-            // }
-            //
-            // console.log(str);
+            //display debug
+            let str = '';
+            for (let y = 0; y < 18; ++y) {
+                for (let x = 0; x < 32; ++x) {
+                    str += map[y][x];
+                }
+                str += "\n";
+            }
+
+            console.log(str);
 
             MapObj.draw();
         }
 	}, 100);
 });
-
-// document.addEventListener("keydown", event => {
-// 	if (event.keyCode === 40) {
-// 		Kreciu.move('down');
-// 	}
-// 	if (event.keyCode === 38) {
-// 		Kreciu.move('up');
-// 	}
-// 	if (event.keyCode === 39) {
-// 		Kreciu.move('right');
-// 	}
-// 	if (event.keyCode === 37) {
-// 		Kreciu.move('left');
-// 	}
-// });
 
 function toggleFieldClass(id, prev, thenew)
 {
@@ -175,6 +164,7 @@ function toggleFieldClass(id, prev, thenew)
 	field.classList.remove('snake');
 	field.classList.remove('cow');
 	field.classList.remove('dig');
+    field.classList.remove('exit');
 
 	if (thenew === 'K') {
 		thenew = KretStateMapper[kretekLastDir];
