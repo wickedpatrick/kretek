@@ -2,27 +2,6 @@
 var levels = [
 "", //tu nie ma nic
 
-// "\
-// ################################\
-// #......#GGGG.GGG.G#GG#..G...GG.#\
-// #G..K...##GG..G.GG#..#G...G...G#\
-// ##G.......###GGGG#... ##G.....G#\
-// #.##GG...A...####.......##G...G#\
-// #..G###GG....G    ...B ...#..#G#\
-// #...G..#####GGGGG G.... .....#.#\
-// #.G ...G..G###GGG G#... .G.....#\
-// #...G G..G.G.G##G GG##.. ...#..#\
-// #..GG. ..G.G.. ## G#..#. ..#G..#\
-// #.G .G.G...G.GGG# #....# ..#..##\
-// #..GG. G.GG. GGG# ..G.... #....#\
-// #.G.G... G..GG#G. ....... .##C.#\
-// #..G..G...GGG#G.. .. .G.. ...#.#\
-// #GGG.G..GGG##GG.. ..#..... ...##\
-// #GGGGGGG###GGG... E#GG ..    ..#\
-// #GGG#####GGG....GG#GG. ..  L  .#\
-// ################################\
-// ",
-
 //level 1
 "\
 ################################\
@@ -39,7 +18,7 @@ var levels = [
 #                              #\
 #                              #\
 #                              #\
-#                              #\
+#           E                  #\
 #                              #\
 #                              #\
 ################################\
@@ -51,10 +30,10 @@ var levels = [
 #                              #\
 #                              #\
 #                              #\
+#              K               #\
 #                              #\
 #                              #\
-#                              #\
-#                              #\
+#               E              #\
 #                              #\
 #                              #\
 #             A                #\
@@ -89,6 +68,8 @@ let loadLevel = function(levelNo)
             levelData[y][x] = textData.charAt(idx++);
         }
     }
+
+    isLeft = isRight = isUp = isDown = false;
 
     return levelData;
 };
@@ -185,14 +166,6 @@ let isFieldFree = function(x, y, forGravity = false)
     return true;
 };
 
-let isKretDead = function(x, y)
-{
-    if (map[y][x] === 'S') { //snake eats kretek
-        return true;
-    }
-    return false;
-};
-
 let moveKretAt = function(dir)
 {
     kretekLastDir = dir;
@@ -286,49 +259,54 @@ let moveSnake = function()
 
 map = loadLevel(1);
 
-setInterval(function() {
-
-    return;
-    if (isDown) moveKretAt('down');
-    else if (isUp) moveKretAt('up');
-    else if (isRight) moveKretAt('right');
-    else if (isLeft) moveKretAt('left');
-
-    let kPair = findObject('K');
-    moveSnake();
-    let sPair = findObject('S');
-
-    let x1 = kPair[0], x2 = sPair[0], y1 = kPair[1], y2 = sPair[1];
-
-    if (
-        (x1 - 1 === x2 && y1 === y2) ||
-        (x1 + 1 === x2 && y1 === y2) ||
-        (x1 === x2 && y1 + 1 === y2) ||
-        (x1 === x2 && y1 - 1 === y2)
-    ) {
-        map = loadLevel(1);
-        alert("Bitten by river snake");
-        return;
-    }
-
-    if (makeGravity() === 'dead' ) {
-        map = loadLevel(1);
-        alert("Rock hit your head!");
-        return;
-    }
-
-    //display
-    let str = '';
-    for (let y = 0; y < 18; ++y) {
-        for (let x = 0; x < 32; ++x) {
-            str += map[y][x];
-        }
-        str += "\n";
-    }
-    $('#test-pre').text(str);
-
-
-}, 100);
+// setInterval(function() {
+//
+//     let ePair = findObject('E');
+//
+//     if (isDown) moveKretAt('down');
+//     else if (isUp) moveKretAt('up');
+//     else if (isRight) moveKretAt('right');
+//     else if (isLeft) moveKretAt('left');
+//
+//     let kPair = findObject('K');
+//     moveSnake();
+//     let sPair = findObject('S');
+//
+//     let x1 = kPair[0], x2 = sPair[0], y1 = kPair[1], y2 = sPair[1];
+//
+//     if ((x1 - 1 === x2 && y1 === y2) ||
+//         (x1 + 1 === x2 && y1 === y2) ||
+//         (x1 === x2 && y1 + 1 === y2) ||
+//         (x1 === x2 && y1 - 1 === y2)
+//     ) {
+//         map = loadLevel(1);
+//         alert("Bitten by river snake");
+//         return;
+//     }
+//
+//     if (makeGravity() === 'dead' ) {
+//         map = loadLevel(1);
+//         alert("Rock hit your head!");
+//         return;
+//     }
+//
+//     if (ePair[0] === x1 && ePair[1] === y1) {
+//         alert("next level");
+//         ++gameState;
+//         map = loadLevel(gameState);
+//     }
+//
+//     //display
+//     let str = '';
+//     for (let y = 0; y < 18; ++y) {
+//         for (let x = 0; x < 32; ++x) {
+//             str += map[y][x];
+//         }
+//         str += "\n";
+//     }
+//     $('#test-pre').text(str);
+//
+// }, 100);
 
 var kretekLastDir = "right";
 var isLeft = false;
