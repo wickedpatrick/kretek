@@ -107,8 +107,12 @@ let loadLevel = function(levelNo)
 
 var map = [];
 
-let makeGravity = function(kretX, kretY)
+let makeGravity = function()
 {
+    let pair = findObject('K');
+    let kretX = pair[0];
+    let kretY = pair[1];
+
     for (let y = 16; y >= 0; --y) {
         for (let x = 0; x < 32; ++x) {
             let c = map[y][x];
@@ -117,9 +121,8 @@ let makeGravity = function(kretX, kretY)
                 if (isFieldFree(x, y + 1, true)) {
                     map[y][x] = ' ';
                     map[y + 1][x] = c;
-
-                    if (y + 1 === kretY && x === kretX) { //todo kret zajebany
-                        // return true;
+                    if (y + 2 === kretY && x === kretX) {
+                        return 'dead';
                     }
                 } else {
                     if (isFieldFree(x - 1, y, true) &&
@@ -128,8 +131,12 @@ let makeGravity = function(kretX, kretY)
                         isFieldFree(x + 1, y + 1, true) &&
                         y + 1 < 17 && map[y + 1][x] === 'G'
                     ) {
+                        let newX = x + (getRand(0, 1) === 0 ? 1 : -1);
                         map[y][x] = ' ';
-                        map[y + 1][x + (getRand(0, 1) === 0 ? 1 : -1)] = 'G';
+                        map[y + 1][newX] = 'G';
+                        if (y + 2 === kretY && newX === kretX) {
+                            return 'dead';
+                        }
                     } else if (
                         isFieldFree(x - 1, y, true) &&
                         isFieldFree(x - 1, y + 1, true) &&
@@ -137,6 +144,9 @@ let makeGravity = function(kretX, kretY)
                     ) {
                         map[y][x] = ' ';
                         map[y + 1][x - 1] = 'G';
+                        if (y + 2 === kretY && x - 1 === kretX) {
+                            return 'dead';
+                        }
                     } else if (
                         isFieldFree(x + 1, y, true) &&
                         isFieldFree(x + 1, y + 1, true) &&
@@ -144,14 +154,16 @@ let makeGravity = function(kretX, kretY)
                     ) {
                         map[y][x] = ' ';
                         map[y + 1][x + 1] = 'G';
+                        if (y + 1 === kretY && x + 1 === kretX) {
+                            return 'dead';
+                        }
                     }
                 }
-
             }
         }
     }
 
-    return false;
+    return 'ok';
 };
 
 let isFieldFree = function(x, y, forGravity = false)
@@ -220,8 +232,6 @@ let moveKretAt = function(dir)
     return false;
 };
 
-let snakes = [];
-
 let findObject = function(char)
 {
     for (let y = 0; y < 18; ++y) {
@@ -276,27 +286,49 @@ let moveSnake = function()
 
 map = loadLevel(1);
 
-// setInterval(function() {
-//     //logic
-//     if (isDown) moveKretAt('down');
-//     else if (isUp) moveKretAt('up');
-//     else if (isRight) moveKretAt('right');
-//     else if (isLeft) moveKretAt('left');
-//
-//     //display
-//     let str = '';
-//     for (let y = 0; y < 18; ++y) {
-//         for (let x = 0; x < 32; ++x) {
-//             str += map[y][x];
-//         }
-//         str += "\n";
-//     }
-//     $('#test-pre').text(str);
-//
-//     moveSnake();
-//     makeGravity(0, 0);
-//
-// }, 100);
+setInterval(function() {
+
+    // return;
+    if (isDown) moveKretAt('down');
+    else if (isUp) moveKretAt('up');
+    else if (isRight) moveKretAt('right');
+    else if (isLeft) moveKretAt('left');
+
+    let kPair = findObject('K');
+    moveSnake();
+    let sPair = findObject('S');
+
+    let x1 = kPair[0], x2 = sPair[0], y1 = kPair[1], y2 = sPair[1];
+
+    if (
+        (x1 - 1 === x2 && y1 === y2) ||
+        (x1 + 1 === x2 && y1 === y2) ||
+        (x1 === x2 && y1 + 1 === y2) ||
+        (x1 === x2 && y1 - 1 === y2)
+    ) {
+        map = loadLevel(1);
+        alert("Bitten by river snake");
+        return;
+    }
+
+    if (makeGravity() === 'dead' ) {
+        map = loadLevel(1);
+        alert("Rock hit your head!");
+        return;
+    }
+
+    //display
+    let str = '';
+    for (let y = 0; y < 18; ++y) {
+        for (let x = 0; x < 32; ++x) {
+            str += map[y][x];
+        }
+        str += "\n";
+    }
+    $('#test-pre').text(str);
+
+
+}, 100);
 
 var kretekLastDir = "right";
 var isLeft = false;
