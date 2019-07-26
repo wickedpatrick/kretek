@@ -4,7 +4,11 @@ const MAX_HEIGHT = 900;
 var FieldClassMapper = {
 	'#': 'wall',
 	'G': 'stone',
-	'.': 'ground'
+	'.': 'ground',
+	'A': 'w1',
+	'B': 'w2',
+	'C': 'w3',
+	'S': 'snake',
 };
 
 var KretStateMapper = {
@@ -205,6 +209,10 @@ function toggleFieldClass(id, prev, thenew)
 	field.classList.remove('ground');
 	field.classList.remove('stone');
 	field.classList.remove('wall');
+	field.classList.remove('w1');
+	field.classList.remove('w2');
+	field.classList.remove('w3');
+	field.classList.remove('snake');
 
 	if (thenew === 'K') {
 		thenew = KretStateMapper[kretekLastDir];
