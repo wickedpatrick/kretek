@@ -173,8 +173,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 str += "\n";
             }
 
-            //console.log(str);
-
+            console.log(str);
 
             MapObj.draw();
         }
@@ -224,9 +223,3 @@ function createDiv (x, y) {
 	mapField.classList.add("field");
 	document.querySelector('#map').appendChild(mapField);
 }
-
-
-
-
-
-
