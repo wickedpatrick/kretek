@@ -39,4 +39,3 @@ let loadLevel = function(levelNo)
     return levelData;
 };
 
-var map = 1234;
