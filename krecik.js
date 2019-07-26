@@ -10,8 +10,8 @@ var FieldClassMapper = {
 var KretStateMapper = {
 	'right': 'kr',
 	'left': 'kl',
-	'front': 'kf',
-	'back': 'kb',
+	'down': 'kf',
+	'up': 'kb',
 };
 
 var gameState = 0;
@@ -177,7 +177,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             MapObj.draw();
         }
-	}, 100);
+	}, 50);
 });
 
 // document.addEventListener("keydown", event => {
@@ -198,13 +198,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
 function toggleFieldClass(id, prev, thenew)
 {
 	var field = document.querySelector('#' + id);
+	field.classList.remove('kl');
+	field.classList.remove('kr');
+	field.classList.remove('kf');
+	field.classList.remove('kb');
+	field.classList.remove('ground');
+	field.classList.remove('stone');
+	field.classList.remove('wall');
 
 	if (thenew === 'K') {
-		field.classList.remove('kl');
-		field.classList.remove('kr');
-		field.classList.remove('kf');
-		field.classList.remove('kb');
-
 		thenew = KretStateMapper[kretekLastDir];
 	} else {
 		prev = FieldClassMapper[prev];

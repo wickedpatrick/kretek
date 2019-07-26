@@ -288,7 +288,7 @@ map = loadLevel(1);
 
 setInterval(function() {
 
-    // return;
+    return;
     if (isDown) moveKretAt('down');
     else if (isUp) moveKretAt('up');
     else if (isRight) moveKretAt('right');
