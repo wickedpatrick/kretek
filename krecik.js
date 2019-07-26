@@ -20,95 +20,6 @@ var KretStateMapper = {
 
 var gameState = 0;
 
-class Kretek {
-	
-	constructor(x, y) {
-		this.posX = x * 50;
-		this.posY = y * 50;
-		this.mapX = x;
-		this.mapY = y;
-		this.score = 0;
-	}
-
-	init(map) {
-		this.domObj = document.querySelector('#krecik');
-		this.domObj.style.width = '50px';
-		this.domObj.style.height = '50px';
-		this.domObj.style.backgroundColor = 'red';
-		this.domObj.style.position = 'absolute';
-		this.domObj.style.top = this.posY + 'px';
-		this.domObj.style.left = this.posX + 'px';
-		this.map = map;
-	}
-
-	move (direction) {
-		if (direction === 'down') {
-			if (!this.isMovePossible('Y', this.posY + 50)) {
-				return;
-			}
-			if (this.isBlocked(this.mapX, this.mapY + 1)) {
-				return;
-			}
-			this.posY = this.posY + 50;
-			this.mapY++;
-		}
-		if (direction === 'up') {
-			if (!this.isMovePossible('Y', this.posY - 50)) {
-				return;
-			}
-			if (this.isBlocked(this.mapX, this.mapY - 1)) {
-				return;
-			}			
-			this.posY = this.posY - 50;
-			this.mapY--;
-		}
-		if (direction === 'right') {
-			if (!this.isMovePossible('X', this.posX + 50)) {
-				return;
-			}
-			if (this.isBlocked(this.mapX + 1, this.mapY)) {
-				return;
-			}			
-			this.posX = this.posX + 50;
-			this.mapX++;
-		}
-		if (direction === 'left') {
-			if (!this.isMovePossible('X', this.posX - 50)) {
-				return;
-			}
-			if (this.isBlocked(this.mapX - 1, this.mapY)) {
-				return;
-			}						
-			this.posX = this.posX - 50;
-			this.mapX--;
-		}
-		this.domObj.style.top = this.posY + 'px';
-		this.domObj.style.left = this.posX + 'px';
-	}
-
-	// isMovePossible(os, val) {
-	// 	if (os === 'Y') {
-	// 		if (val < 0 || val >= MAX_HEIGHT) {
-	// 			return false;
-	// 		}
-	// 	}
-	// 	if (os === 'X') {
-	// 		if (val < 0 || val >= MAX_WIDTH) {
-	// 			return false;
-	// 		}
-	// 	}
-	// 	return true;
-	// }
-
-	isBlocked(x, y) {
-		if (this.map[y][x] === '#' || this.map[y][x] === 'G') {
-			return true;
-		}
-		return false;
-	}
-
-}
-
 class MapMaker {
 	constructor() {
 		this.map = document.querySelector('#map');
@@ -149,6 +60,8 @@ class MapMaker {
 }	
 
 
+    var globalCounter = 0;
+
 window.addEventListener('DOMContentLoaded', (event) => {
 
     const MapObj = new MapMaker();
@@ -160,6 +73,50 @@ window.addEventListener('DOMContentLoaded', (event) => {
  	        gameState = 1;
  	        loadLevel(gameState);
         } else {
+
+            let ePair = findObject('E');
+
+            if (globalCounter % 2 === 0) {
+                if (isDown) moveKretAt('down');
+                else if (isUp) moveKretAt('up');
+                else if (isRight) moveKretAt('right');
+                else if (isLeft) moveKretAt('left');
+            }
+
+            ++globalCounter;
+
+
+            let kPair = findObject('K');
+            moveSnake();
+            let sPair = findObject('S');
+
+            let x1 = kPair[0], x2 = sPair[0], y1 = kPair[1], y2 = sPair[1];
+
+            if ((x1 - 1 === x2 && y1 === y2) ||
+                (x1 + 1 === x2 && y1 === y2) ||
+                (x1 === x2 && y1 + 1 === y2) ||
+                (x1 === x2 && y1 - 1 === y2)
+            ) {
+                gameState = 1;
+                map = loadLevel(gameState);
+                alert("Bitten by river snake");
+                return;
+            }
+
+            if (makeGravity() === 'dead' ) {
+                gameState = 1;
+                map = loadLevel(gameState);
+                alert("Rock hit your head!");
+                return;
+            }
+
+            if (ePair[0] === x1 && ePair[1] === y1) {
+                alert("next level");
+                ++gameState;
+                map = loadLevel(gameState);
+                return;
+            }
+
             if (isDown) moveKretAt('down');
             else if (isUp) moveKretAt('up');
             else if (isRight) moveKretAt('right');
@@ -168,20 +125,20 @@ window.addEventListener('DOMContentLoaded', (event) => {
             moveSnake();
             makeGravity(0, 0);
 
-            //display debug
-            let str = '';
-            for (let y = 0; y < 18; ++y) {
-                for (let x = 0; x < 32; ++x) {
-                    str += map[y][x];
-                }
-                str += "\n";
-            }
-
-            console.log(str);
+            // //display debug
+            // let str = '';
+            // for (let y = 0; y < 18; ++y) {
+            //     for (let x = 0; x < 32; ++x) {
+            //         str += map[y][x];
+            //     }
+            //     str += "\n";
+            // }
+            //
+            // console.log(str);
 
             MapObj.draw();
         }
-	}, 50);
+	}, 100);
 });
 
 // document.addEventListener("keydown", event => {
