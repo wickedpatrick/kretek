@@ -109,18 +109,24 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 (x1 === x2 && y1 - 1 === y2)
             ) {
                 map = loadLevel(gameState);
-                alert("Bitten by river snake");
-                return;
+				setTimeout(function() {
+					alert("Bitten by snake!");
+					map = loadLevel(gameState);
+				}, 500);
+				return;
             }
 
             if (makeGravity() === 'dead') {
-                map = loadLevel(gameState);
-                alert("Rock hit your head!");
+                setTimeout(function() {
+                	alert("Rock hit your head!");
+					map = loadLevel(gameState);
+				}, 500);
+
                 return;
             }
 
             if (ePair[0] === x1 && ePair[1] === y1) {
-                alert("next level");
+                // alert("next level");
                 ++gameState;
                 map = loadLevel(gameState);
                 return;
