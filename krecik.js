@@ -132,7 +132,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 return;
             }
 
-            makeGravity();
+            // makeGravity();
 
             // //display debug
             // let str = '';
